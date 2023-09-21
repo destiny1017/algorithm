@@ -23,7 +23,7 @@ def binary_search(start, end, target):
         else:
             sum += i - mid
 
-    print(mid, sum)
+    # print(mid, sum)
     if sum == target:
         return mid
     elif sum < target:
