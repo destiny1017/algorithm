@@ -46,6 +46,18 @@ class BinarySearchTree:
         elif node.value < value:
             return self.__search_recursive(node.right, value)
 
+    def __node_change(self, left_change, target, value):
+        if left_change:
+            target.left = value
+        else:
+            target.right = value
+
+    def __node_value_change(self, left_change, target, value):
+        if left_change:
+            target.left.value = value
+        else:
+            target.right.value = value
+
     def delete(self, value):
         node = self.root
         parent = None
@@ -66,50 +78,66 @@ class BinarySearchTree:
                 node = node.right
                 smaller_than_parent = False
 
-        if node.left is None and node.right is None:
-            if smaller_than_parent:
-                parent.left = None
+        if parent is not None:
+            if node.left is None and node.right is None:
+                self.__node_change(smaller_than_parent, parent, None)
+            elif node.left is None:
+                self.__node_change(smaller_than_parent, parent, node.right)
+            elif node.right is None:
+                self.__node_change(smaller_than_parent, parent, node.left)
             else:
-                parent.right = None
-        elif node.left is None:
-            if smaller_than_parent:
-                parent.left = node.right
-            else:
-                parent.right = node.right
-        elif node.right is None:
-            if smaller_than_parent:
-                parent.left = node.left
-            else:
-                parent.right = node.left
-        else:
-            max_node = node.left
-            max_node_parent = node
-            is_left_max = True
-            while max_node.right is not None:
-                max_node_parent = max_node
-                max_node = max_node.right
-                is_left_max = False
+                max_node = node.left
+                max_node_parent = node
+                is_left_max = True
+                while max_node.right is not None:
+                    max_node_parent = max_node
+                    max_node = max_node.right
+                    is_left_max = False
 
-            if max_node.left is None:
-                if smaller_than_parent:
-                    parent.left.value = max_node.value
+                if max_node.left is None:
+                    # self.__node_value_change(smaller_than_parent, parent, max_node.value)
+                    node.value = max_node.value
+                    if is_left_max:
+                        max_node_parent.left = None
+                    else:
+                        max_node_parent.right = None
                 else:
-                    parent.right.value = max_node.value
+                    if is_left_max:
+                        max_node.right = node.right
+                        node.left = max_node
+                    else:
+                        max_node_parent.right = max_node.left
+                        node.value = max_node.value
+        else:
+            if node.left is None and node.right is None:
+                self.root = None
+            elif node.left is None:
+                self.root = node.right
             else:
-                if is_left_max:
-                    if smaller_than_parent:
-                        parent.left = max_node
+                max_node = node.left
+                max_node_parent = node
+                is_left_max = True
+                while max_node.right is not None:
+                    max_node_parent = max_node
+                    max_node = max_node.right
+                    is_left_max = False
+
+                if max_node.left is None:
+                    if is_left_max:
+                        max_node.right = self.root.right
+                        self.root = max_node
                     else:
-                        parent.right = max_node
+                        self.root.value = max_node.value
+                        max_node_parent.right = None
                 else:
-                    max_node_parent.right = max_node.left
-                    if smaller_than_parent:
-                        parent.left = max_node
+                    if is_left_max:
+                        max_node.right = self.root.right
+                        self.root = max_node
                     else:
-                        parent.right = max_node
+                        self.root.value = max_node.value
+                        max_node_parent.right = max_node.left
 
         return True
-
 
 
 def print_tree(node, level=0):
@@ -121,35 +149,54 @@ def print_tree(node, level=0):
     print_tree(node.left, level + 1)
 
 
-tree = BinarySearchTree()
-tree.insert(5)
-tree.insert(9)
-tree.insert(7)
-tree.insert(4)
-tree.insert(1)
-tree.insert(2)
-tree.insert(3)
-tree.insert(8)
+def set_tree_value(tree):
+    tree.insert(7)
+    tree.insert(4)
+    tree.insert(2)
+    tree.insert(9)
+    tree.insert(5)
+    tree.insert(1)
+    tree.insert(3)
+    tree.insert(8)
+    tree.insert(11)
+    tree.insert(10)
 
+
+tree = BinarySearchTree()
+set_tree_value(tree)
+
+print_tree(tree.root)
+print("-------------------------------")
+tree.delete(7)
+print_tree(tree.root)
+print("-------------------------------")
+tree.delete(5)
 print_tree(tree.root)
 print("-------------------------------")
 tree.delete(3)
 print_tree(tree.root)
 print("-------------------------------")
+tree.delete(1)
+print_tree(tree.root)
+print("-------------------------------")
+tree.delete(9)
+print_tree(tree.root)
+print("-------------------------------")
+tree.delete(4)
+print_tree(tree.root)
+print("-------------------------------")
+tree.delete(2)
+print_tree(tree.root)
+print("-------------------------------")
 tree.delete(8)
 print_tree(tree.root)
 print("-------------------------------")
-tree.delete(7)
+tree.insert(5)
+tree.insert(3)
+tree.insert(4)
+tree.insert(15)
+tree.insert(13)
+tree.insert(14)
 print_tree(tree.root)
-
-print(tree.search(2))
-print(tree.search(8))
-print(tree.search(10))
-print(tree.search(9))
-print("=====================")
-print(tree.delete(11))
-print(tree.delete(5))
-print_tree(tree.root)
-
 
 
