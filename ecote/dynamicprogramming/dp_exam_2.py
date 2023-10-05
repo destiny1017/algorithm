@@ -19,6 +19,3 @@ for i in range(1, m+1):
 
 # print(dp[:m+1])
 print(dp[m])
-
-
-

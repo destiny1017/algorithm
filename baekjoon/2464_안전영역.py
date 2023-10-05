@@ -5,7 +5,7 @@ from collections import deque
 n = int(sys.stdin.readline())
 frame = []
 flooded = []
-dx, dy = [0, 1, -1, 0], [1, 0, 0, -1]
+dx, dy = [0, 0, 1, -1], [1, -1, 0, 0]
 
 max_height = 0
 min_height = 100
@@ -19,34 +19,35 @@ for row in frame:
     min_height = min(min_height, min(row))
 
 
-def bfs(px, py, water_depth):
+def bfs(px, py):
     queue = deque()
     queue.append((px, py))
+    flooded[px][py] = True
 
     while queue:
         x, y = queue.popleft()
-        flooded[x][y] = True
-
         for i in range(4):
             nx = dx[i] + x
             ny = dy[i] + y
-            if nx >= n or nx < 0 or ny >= n or ny < 0:
+            if nx >= n or nx < 0 or ny >= n or ny < 0 or flooded[nx][ny]:
                 continue
-            if water_depth >= frame[nx][ny]:
-                continue
-            if flooded[nx][ny]:
-                continue
+            flooded[nx][ny] = True
             queue.append((nx, ny))
 
 
-for water_depth in range(min_height, max_height):
+for water_depth in range(0, max_height):
     flooded = [[False] * n for _ in range(n)]
     safe_zone = 0
 
     for i in range(n):
         for j in range(n):
-            if not flooded[i][j] and water_depth < frame[i][j]:
-                bfs(i, j, water_depth)
+            if water_depth >= frame[i][j]:
+                flooded[i][j] = True
+
+    for i in range(n):
+        for j in range(n):
+            if not flooded[i][j]:
+                bfs(i, j)
                 safe_zone += 1
 
     # print(f"depth = {water_depth}, safe zone = {safe_zone}")
