@@ -1,31 +1,22 @@
-import sys
+# 테스트 케이스 개수 입력
+t = int(input())
 
-t = int(sys.stdin.readline())
-site = [None] * t
-cnt = 0
+for _ in range(t):
+    # 다리를 놓을 서쪽과 동쪽의 사이트 개수 입력
+    n, m = map(int, input().split())
 
-for i in range(t):
-    site[i] = tuple(map(int, sys.stdin.readline().split()))
+    # 다리를 놓을 수 있는 경우의 수를 저장할 dp 테이블 초기화
+    dp = [[0] * (m + 1) for _ in range(n + 1)]
 
-def combination(n, m, min, max):
-    print(n, m)
-    if n == min:
-        global cnt
-        cnt += 1
-        return
+    # 초기 조건 설정
+    for i in range(m + 1):
+        dp[1][i] = i
 
-    for i in range(n, max - (min - n)):
-        combination(n+1, i, min, max)
+    # DP로 경우의 수 계산
+    for i in range(2, n + 1):
+        for j in range(i, m + 1):
+            for k in range(j, i - 1, -1):
+                dp[i][j] += dp[i - 1][k - 1]
 
-    # for i in range(n, min+1):
-    #     for j in range(i, m+1):
-    #         combination(n+1, j, min, max)
-
-
-
-for i in range(t):
-    cnt = 0
-    n, m = site[i]
-    combination(1, m, n, m)
-    print(cnt)
-
+    # 다리를 놓을 수 있는 경우의 수 출력
+    print(dp[n][m])
