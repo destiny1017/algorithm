@@ -4,14 +4,15 @@ n = int(input())
 arr = [list(map(int, input().split())) for _ in range(n)]
 items = [i+1 for i in range(n)]
 
+# 한 팀에 구성할 수 있는 인원의 경우의 수 구하기
 cases = list(combinations(items, n // 2))
 diff = 2**31
 
+# 경우의 수의 절반 만큼을 순회하며, 첫 팀과 끝 팀의 점수 차 구하기(정렬 조합이므로 가능)
 for i in range(len(cases)//2):
-    a = cases[i]
-    b = cases[len(cases) - 1 - i]
-    a_case = list(permutations(a, 2))
-    b_case = list(permutations(b, 2))
+    a_case = list(permutations(cases[i], 2))
+    b_case = list(permutations(cases[len(cases) - 1 - i], 2))
+
     point_a = 0
     point_b = 0
     for j in range(len(a_case)):
